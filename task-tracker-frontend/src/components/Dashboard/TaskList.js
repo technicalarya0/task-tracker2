@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import API from "../../api.js";
 
-const TaskList = () => {
+const TaskList = ({projectId}) => {
   const [tasks, setTasks] = useState([]);
   const [form, setForm] = useState({ title: "", description: "" });
 
