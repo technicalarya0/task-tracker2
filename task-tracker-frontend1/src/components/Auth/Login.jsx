@@ -20,14 +20,23 @@ const Login = () => {
 
   return (
     <div className='flex flex-col justify-center items-center min-h-screen bg-gray-900'>
+      <div className='flex flex-col items-center border-2 border-gray-800 rounded-lg p-6 bg-gray-800'>
       <h2 className='text-2xl font-bold text-white mb-6'>Login</h2>
         <form
-        className='flex flex-col gap-4'
+        className='flex flex-col gap-4 bg-gey-700'
         onSubmit={handleSubmit}>
-            <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required/>
-            <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required/>
-            <button type='submit'> Login </button>
+            <input
+            className="flex-1 px-4 py-2 rounded-l bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required/>
+            <input
+            className="flex-1 px-4 py-2 rounded-l bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required/>
+            <button
+            className='px-4 py-2 flex-1 rounded '
+            type='submit'> Login </button>
         </form>
+      </div>
+      
     </div>
   )
 }
