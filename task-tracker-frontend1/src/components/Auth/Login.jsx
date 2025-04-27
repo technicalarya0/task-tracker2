@@ -6,17 +6,24 @@ import { AuthContext } from '../../context/AuthContext.jsx';
 
 const Login = () => {
     const [form, setForm] = useState({email:"", password: ""});
+    const [error, setError] = useState("");
     const {login} = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleChange = e => setForm({...form, [e.target.name]: e.target.value});
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        const res = await API.post("/users/login", form);
-        login(res.data.token);
-        navigate("/dashboard");
-    }
+      e.preventDefault();
+      setError("");
+      try {
+          const res = await API.post("/api/users/login", form);
+          login(res.data.token);
+          navigate("/dashboard");
+      } catch (err) {
+          setError(err.response?.data?.message || "Login failed");
+      }
+  }
+
 
   return (
     <div className='flex flex-col justify-center items-center min-h-screen bg-gray-900'>

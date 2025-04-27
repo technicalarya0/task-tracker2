@@ -5,6 +5,6 @@ import {createProject, getProjects} from "../controllers/projectControllers.js";
 import authToken from '../middlewares/auth.js';
 
 router.post("/", authToken, createProject);
-router.post("/", authToken, getProjects);
+router.get("/", authToken, getProjects);
 
 export default router;

@@ -7,7 +7,7 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
-    Country: "",
+    country: "",
   });
   const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await API.post("/users/signup",form);
+    await API.post("/api/users/signup",form);
     navigate("/login");
   };
 

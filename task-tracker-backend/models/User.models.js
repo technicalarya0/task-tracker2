@@ -7,4 +7,5 @@ const userSchema = new mongoose.Schema({
     country: String,
 })
 
-modeule.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;

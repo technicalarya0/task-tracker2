@@ -4,21 +4,30 @@ import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res) => {
     try {
-
-        const {email, password, name, country} = req.body;
-        const existingUser = await User;
-        if (existingUser) return res.status(400).json({message: "User already exists"});
+        const { name, email, password, country } = req.body;
+        // Correctly check for existing user
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(409).json({ message: "User already exists" });
 
         const hash = await bcrypt.hash(password, 10);
-        const newUser = await User({name, email, password: hash, country});
+        // Correctly create a new user
+        const newUser = new User({ name, email, password: hash, country });
         const savedUser = await newUser.save();
-        
-        const token = jwt.sign({id: savedUser._id}, process.env.JWT_SECRET, {expiresIn: "1h"});
 
-        res.status(201).json({token, user: {id: savedUser._id,name: savedUser.name, email: savedUser.email, country: savedUser.country}});
-        
+        const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        res.status(201).json({
+            token,
+            user: {
+                id: savedUser._id,
+                name: savedUser.name,
+                email: savedUser.email,
+                country: savedUser.country
+            }
+        });
+
     } catch (err) {
-        res.status(400).json({error: err.message});
+        res.status(400).json({ error: err.message });
     }
 };
 
