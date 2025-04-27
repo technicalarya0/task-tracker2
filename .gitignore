@@ -1,0 +1,75 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# dotenv environment variables
+.env
+.env.* 
+
+# Logs
+logs
+*.log
+logs/
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+out/
+coverage/
+.next/
+.cache/
+.vite/
+.vscode/
+
+# Dependency directories
+bower_components/
+jspm_packages/
+
+# Editor directories and files
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# React Native
+.expo/
+
+# Misc
+*.tgz
+*.swp
+
+# VSCode settings
+.vscode/*
+!.vscode/settings.json
+
+# MongoDB database files (if any local db)
+*.mongodb
+
+# Optional: Ignore test coverage
+coverage/
+.nyc_output/
+
+# Optional: Ignore production files
+*.env.production
+
+# Optional: Ignore local development files
+*.local
+
+# Optional: Ignore frontend build artifacts
+task-tracker-frontend/build/
+task-tracker-frontend1/build/
+task-tracker-frontend/dist/
+task-tracker-frontend1/dist/
+
+# Optional: Ignore backend build artifacts
+task-tracker-backend/dist/
