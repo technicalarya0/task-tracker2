@@ -14,7 +14,7 @@ export const signUp = async (req, res) => {
         const newUser = new User({ name, email, password: hash, country });
         const savedUser = await newUser.save();
 
-        const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ id: savedUser._id, name: savedUser.name, email: savedUser.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         res.status(201).json({
             token,
@@ -40,7 +40,8 @@ export const login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch) return res.status(400).json({message: "Invalid credentials"});
 
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "5h"});
+        const token = jwt.sign({id: user._id, name: user.name, email: user.email },
+            process.env.JWT_SECRET, {expiresIn: "5h"});
         res.json({token});
     } catch (err) {
         res.status(400).json({error: err.message});

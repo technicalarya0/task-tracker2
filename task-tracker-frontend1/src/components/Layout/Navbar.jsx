@@ -7,14 +7,14 @@ const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
 
   return (
-    <nav className="bg-gray-900 px-4 py-3 flex items-center justify-between shadow-md">
+    <nav className="bg-gray-950 px-4 py-3 flex items-center justify-between shadow-md">
       <span className="text-white font-bold text-xl">
         <Link to="/dashboard">TaskTracker</Link>
       </span>
       <div className="flex space-x-4">
         {user ? (
           <>
-            <span className="text-white">Hello, {user.name || user.email}</span>
+            <span className="text-white">Hello {user.name || user.email}</span>
             <button onClick={logOut} className="text-white hover:text-gray-300">
               Logout
             </button>
