@@ -9,7 +9,7 @@ const Navbar = () => {
   return (
     <nav className="bg-gray-900 px-4 py-3 flex items-center justify-between shadow-md">
       <span className="text-white font-bold text-xl">
-        <Link to="/">TaskTracker</Link>
+        <Link to="/dashboard">TaskTracker</Link>
       </span>
       <div className="flex space-x-4">
         {user ? (

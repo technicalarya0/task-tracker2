@@ -1,13 +1,46 @@
 import React, { useState, useEffect } from "react";
 import API from "../../api.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const TaskList = ({ projectId }) => {
+const TaskList = ({ title }) => {
+  const [projectId, setProjectId] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [form, setForm] = useState({ title: "", description: "" });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      setLoading(true);
+      try {
+        const res = await API.get("/api/projects");
+        const project = res.data.find((p) => p.title === decodeURIComponent(title));
+        if (project) {
+          setProjectId(project._id);
+        } else {
+          toast.error("Project not found");
+        }
+      } catch (err) {
+        toast.error("Failed to fetch tasks: ", err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProject();
+  }, [title]);
 
   const fetchTasks = async () => {
-    const res = await API.get(`/tasks?projectId=${projectId}`);
-    setTasks(res.data);
+    if (!projectId) return;
+    setLoading(true);
+
+    try {
+      const res = await API.get(`/api/tasks?projectId=${projectId}`);
+      setTasks(res.data);
+    } catch (err) {
+      toast.error("Failed to fetch tasks", err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -15,19 +48,32 @@ const TaskList = ({ projectId }) => {
   }, [projectId]);
 
   const handleCreate = async () => {
-    await API.post("/tasks", { ...form, projectId });
-    setForm({ title: "", description: "" });
-    fetchTasks();
+    if (!form.title.trim() || !form.description.trim()) return;
+    try {
+      await API.post("/api/tasks", { ...form, projectId });
+      setForm({ title: "", description: "" });
+      fetchTasks();
+    } catch (err) {
+      toast.error("Failed to add task:")
+      console.error("Failed to add task:", err);
+    }
   };
 
   const handleDelete = async (id) => {
-    await API.delete(`/tasks/${id}`);
-    fetchTasks();
+    try {
+      await API.delete(`/api/tasks/${id}`);
+      fetchTasks();
+    } catch (err) {
+      setError("Failed to delete task.");
+    }
   };
+
+  if (loading) return <div className="text-white">Loading...</div>;
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-md">
-      <h2 className="text-xl font-bold text-white mb-4">Your Tasks</h2>
+      <ToastContainer position="top-right" autoClose={2000} />
+      <h2 className="text-xl font-bold text-white mb-4">Your Tasks for Project {title}</h2>
       <div className="flex flex-col md:flex-row gap-2 mb-4">
         <input
           value={form.title}
@@ -63,7 +109,7 @@ const TaskList = ({ projectId }) => {
               onClick={() => handleDelete(p._id)}
               className="ml-4 px-3 py-1 bg-red-600 rounded text-white hover:bg-red-700 transition"
             >
-              Delete
+              X
             </button>
           </li>
         ))}

@@ -8,19 +8,24 @@ export const createTask = async (req, res) => {
 
 export const getTask = async (req, res) => {
     const tasks = await Task.find({project: req.query.projectId});
-    req.json(tasks);
+    res.json(tasks);
 };
 
 export const updateTask = async (req, res) => {
-    const {id} = req.params;
-    const update = req.body;
+    const { id } = req.params;
+    const update = req.body || {};
 
-    if(update.status === "Completed"){
+    // Defensive: Only check status if update is not empty
+    if (update && update.status === "Completed") {
         update.completedAt = new Date();
     }
 
-    const task = await Task.findByIdAndUpdate(id, update, {new: true});
-    res.status(200).json(task);
+    try {
+        const task = await Task.findByIdAndUpdate(id, update, { new: true });
+        res.status(200).json(task);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 };
 
 export const deleteTask = async (req, res) => {
