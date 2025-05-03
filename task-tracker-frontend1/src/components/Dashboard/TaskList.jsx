@@ -79,7 +79,7 @@ const TaskList = ({ title }) => {
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           placeholder="Task Title"
-          className="flex-1 px-4 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-2 px-4 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           value={form.description}
@@ -95,25 +95,44 @@ const TaskList = ({ title }) => {
         </button>
       </div>
       <ul className="space-y-3">
-        {tasks.map((p) => (
-          <li
-            key={p._id}
-            className="flex justify-between items-center bg-gray-700 rounded px-4 py-3 text-white"
+  {tasks.map((task) => (
+    <li
+      key={task._id}
+      className="flex justify-between items-center bg-gray-700 rounded px-4 py-3 text-white"
+    >
+      <div>
+        <div className="font-semibold">{task.title}</div>
+        <div className="text-sm text-gray-300">{task.description}</div>
+        <div className="text-xs text-gray-400">
+          Status: 
+          <select
+            value={task.status}
+            onChange={async (e) => {
+              try {
+                await API.put(`/api/tasks/${task._id}`, { status: e.target.value });
+                fetchTasks(); // Refresh the list
+              } catch {
+                // handle error if needed
+              }
+            }}
+            className="ml-2 bg-gray-800 text-white border border-gray-600 rounded px-1 py-1"
+            style={{ minWidth: "80px" }} 
           >
-            <div>
-              <div className="font-semibold">{p.title}</div>
-              <div className="text-sm text-gray-300">{p.description}</div>
-              <div className="text-xs text-gray-400">Status: {p.status}</div>
-            </div>
-            <button
-              onClick={() => handleDelete(p._id)}
-              className="ml-4 px-3 py-1 bg-red-600 rounded text-white hover:bg-red-700 transition"
-            >
-              X
-            </button>
-          </li>
-        ))}
-      </ul>
+            <option className="" value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <button
+        onClick={() => handleDelete(task._id)}
+        className="ml-4 px-3 py-1 bg-red-400 rounded text-white hover:bg-red-600 transition"
+      >
+        X
+      </button>
+    </li>
+  ))}
+</ul>
     </div>
   );
 };

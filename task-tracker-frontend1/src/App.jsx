@@ -5,6 +5,7 @@ import Login from "./components/Auth/Login";
 import ProjectList from "./components/Dashboard/ProjectList";
 import AuthProvider from "./context/AuthContext";
 import TaskListPage from "./components/Dashboard/TaskListPage";
+import Footer from "./components/Layout/Footer";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/dashboard" element={<ProjectList />} />
             <Route path="/dashboard/taskList/:title" element={<TaskListPage />} />
           </Routes>
+          <Footer />
         </div>
       </BrowserRouter>
     </AuthProvider>

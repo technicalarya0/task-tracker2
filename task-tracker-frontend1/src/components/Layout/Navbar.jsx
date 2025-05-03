@@ -15,6 +15,9 @@ const Navbar = () => {
         {user ? (
           <>
             <span className="text-white">Hello {user.name || user.email}</span>
+            <Link to="/dashboard" className="text-white hover:text-gray-300">
+              Dashboard
+            </Link>
             <button onClick={logOut} className="text-white hover:text-gray-300">
               Logout
             </button>

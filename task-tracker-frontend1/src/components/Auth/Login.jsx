@@ -1,13 +1,17 @@
 import React, { useContext, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import API from "../../api.jsx";
 import { AuthContext } from '../../context/AuthContext.jsx';
 
 const Login = () => {
     const [form, setForm] = useState({email:"", password: ""});
     const [error, setError] = useState("");
-    const {login} = useContext(AuthContext);
+    const {user, login} = useContext(AuthContext);
     const navigate = useNavigate();
+
+    if(user){
+      return <Navigate to="/dashboard" replace/>
+    }
 
     const handleChange = e => setForm({...form, [e.target.name]: e.target.value});
 
