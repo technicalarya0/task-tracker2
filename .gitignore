@@ -23,7 +23,6 @@ pids
 Thumbs.db
 
 # Build output
-dist/
 build/
 out/
 coverage/
