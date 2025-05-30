@@ -1,9 +1,17 @@
 import Task from "../models/Task.models.js";
 
 export const createTask = async (req, res) => {
-    const {title, description, status, projectId} = req.body;
-    const task = await Task.create({title, description, status, project: projectId});
-    res.status(201).json(task);
+    const { title, description, status, project, projectId } = req.body;
+    const projectValue = project || projectId;
+    if (!projectValue) {
+        return res.status(400).json({ message: "Project is required for task creation." });
+    }
+    try {
+        const task = await Task.create({ title, description, status, project: projectValue });
+        res.status(201).json(task);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 };
 
 export const getTask = async (req, res) => {
@@ -24,7 +32,7 @@ export const updateTask = async (req, res) => {
         const task = await Task.findByIdAndUpdate(id, update, { new: true });
         res.status(200).json(task);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ message: err.message });
     }
 };
 

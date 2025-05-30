@@ -27,7 +27,7 @@ export const signUp = async (req, res) => {
         });
 
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ message: err.message });
     }
 };
 
@@ -44,6 +44,6 @@ export const login = async (req, res) => {
             process.env.JWT_SECRET, {expiresIn: "5h"});
         res.json({token});
     } catch (err) {
-        res.status(400).json({error: err.message});
+        res.status(400).json({message: err.message});
     }
 };

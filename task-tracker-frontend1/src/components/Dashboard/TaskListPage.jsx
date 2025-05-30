@@ -4,7 +4,11 @@ import TaskList from "./TaskList";
 
 const TaskListPage = () => {
   const { title } = useParams();
-  return <TaskList title ={title} />;
+  return (
+    <main className="flex-1 flex flex-col">
+      <TaskList title={title} />
+    </main>
+  );
 };
 
 export default TaskListPage;

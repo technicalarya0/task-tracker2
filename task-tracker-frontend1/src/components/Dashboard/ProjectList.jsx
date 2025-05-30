@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import API from "../../api.jsx";
+import axios from "axios";
 import TaskList from "./TaskList.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,7 +12,11 @@ const ProjectList = () => {
   const navigate = useNavigate();
 
   const fetchProjects = async () => {
-    const res = await API.get("/api/projects");
+    const token = localStorage.getItem('token');
+    const res = await axios.get(
+      (import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + "/api/projects",
+      { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+    );
     setProjects(res.data);
   };
 
@@ -23,9 +27,14 @@ const ProjectList = () => {
     }
 
     try {
-      await API.post("/api/projects", { title });
+      const token = localStorage.getItem('token');
+      await axios.post(
+        (import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + "/api/projects",
+        { title },
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
       setTitle("");
-      fetchProjects();
+      await fetchProjects();
       toast.success("Project added successfully!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to add project");
@@ -37,15 +46,15 @@ const ProjectList = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-gray-900 p-6">
+    <main className="flex-1 flex flex-col items-center justify-start bg-white dark:bg-gray-900 p-6 transition-colors duration-500">
       <ToastContainer position="top-right" autoClose={2000} />
-      <h2 className="text-2xl font-bold text-white mb-6">Your Projects</h2>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Your Projects</h2>
       <div className="flex mb-6 w-full max-w-md">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="New Project"
-          className="flex-1 px-4 py-2 rounded-l bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2 rounded-l bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           onClick={handleCreate}
@@ -59,13 +68,13 @@ const ProjectList = () => {
           <li
             key={p._id}
             onClick={() => navigate(`/dashboard/taskList/${p.title}`)}
-            className={`cursor-pointer px-4 py-3 mb-2 rounded bg-gray-800 text-white hover:bg-blue-700 transition `}
+            className={`cursor-pointer px-4 py-3 mb-2 rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-blue-700 hover:text-white transition `}
           >
             {p.title}
           </li>
         ))}
       </ul>
-    </div>
+    </main>
   );
 };
 

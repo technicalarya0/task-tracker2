@@ -2,9 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: rgb(32, 31, 31);
+/* Ensure dark mode is enabled via class strategy */
+html.dark {
+  background-color: #18181b;
 }
-body {
-  color: white;
+html.light {
+  background-color: #f3f4f6;
 }
+
+/* Remove hardcoded body background and color */

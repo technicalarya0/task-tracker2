@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import API from "../../api.jsx";
+import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -13,7 +13,11 @@ const TaskList = ({ title }) => {
     const fetchProject = async () => {
       setLoading(true);
       try {
-        const res = await API.get("/api/projects");
+        const token = localStorage.getItem('token');
+        const res = await axios.get(
+          (import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + "/api/projects",
+          { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+        );
         const project = res.data.find((p) => p.title === decodeURIComponent(title));
         if (project) {
           setProjectId(project._id);
@@ -34,10 +38,14 @@ const TaskList = ({ title }) => {
     setLoading(true);
 
     try {
-      const res = await API.get(`/api/tasks?projectId=${projectId}`);
+      const token = localStorage.getItem('token');
+      const res = await axios.get(
+        (import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + `/api/tasks?projectId=${projectId}`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
       setTasks(res.data);
     } catch (err) {
-      toast.error("Failed to fetch tasks", err.message);
+      toast.error("Failed to fetch tasks: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -50,42 +58,51 @@ const TaskList = ({ title }) => {
   const handleCreate = async () => {
     if (!form.title.trim() || !form.description.trim()) return;
     try {
-      await API.post("/api/tasks", { ...form, projectId });
+      const token = localStorage.getItem('token');
+      await axios.post(
+        (import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + "/api/tasks",
+        { ...form, project: projectId },
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
       setForm({ title: "", description: "" });
       fetchTasks();
     } catch (err) {
-      toast.error("Failed to add task:")
+      toast.error("Failed to add task: " + err.message);
       console.error("Failed to add task:", err);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      await API.delete(`/api/tasks/${id}`);
+      const token = localStorage.getItem('token');
+      await axios.delete(
+        (import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + `/api/tasks/${id}`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
       fetchTasks();
     } catch (err) {
-      setError("Failed to delete task.");
+      toast.error("Failed to delete task.");
     }
   };
 
-  if (loading) return <div className="text-white">Loading...</div>;
+  if (loading) return <div className="text-gray-900 dark:text-white">Loading...</div>;
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 shadow-md">
+    <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-lg p-6 shadow-md transition-colors duration-500">
       <ToastContainer position="top-right" autoClose={2000} />
-      <h2 className="text-xl font-bold text-white mb-4">Your Tasks for Project {title}</h2>
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Your Tasks for Project {title}</h2>
       <div className="flex flex-col md:flex-row gap-2 mb-4">
         <input
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           placeholder="Task Title"
-          className="flex-2 px-4 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-2 px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           placeholder="Task Description"
-          className="flex-1 px-4 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           onClick={handleCreate}
@@ -98,24 +115,29 @@ const TaskList = ({ title }) => {
   {tasks.map((task) => (
     <li
       key={task._id}
-      className="flex justify-between items-center bg-gray-700 rounded px-4 py-3 text-white"
+      className="flex justify-between items-center bg-gray-200 dark:bg-gray-700 rounded px-4 py-3 text-gray-900 dark:text-white"
     >
       <div>
         <div className="font-semibold">{task.title}</div>
-        <div className="text-sm text-gray-300">{task.description}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-300">{task.description}</div>
         <div className="text-xs text-gray-400">
           Status: 
           <select
             value={task.status}
             onChange={async (e) => {
               try {
-                await API.put(`/api/tasks/${task._id}`, { status: e.target.value });
+                const token = localStorage.getItem('token');
+                await axios.put(
+                  (import.meta.env.VITE_BACKEND_URI || 'http://localhost:5000') + `/api/tasks/${task._id}`,
+                  { status: e.target.value },
+                  { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+                );
                 fetchTasks(); // Refresh the list
               } catch {
                 // handle error if needed
               }
             }}
-            className="ml-2 bg-gray-800 text-white border border-gray-600 rounded px-1 py-1"
+            className="ml-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded px-1 py-1"
             style={{ minWidth: "80px" }} 
           >
             <option className="" value="Pending">Pending</option>
